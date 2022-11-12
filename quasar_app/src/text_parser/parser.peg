@@ -8,15 +8,15 @@ grammar text_parser
 
   prefix <- ([-+*] / [\d]+ ".")
 
-  date_expr <- date_segment (@date_separator date_segment)? (@date_separator date_segment)?
+  date_expr <- date_segment (@date_separator date_segment)? (@date_separator date_segment)? %make_date_expr
   date_segment <- [\d]+
   date_separator <- [-./_]
 
-  account_expr <- (account space*)? @">" (space* account)?
+  account_expr <- (account space*)? @">" (space* account)? %make_account_expr
   account <- [^\s\d>] [^\s>]*
 
-  amount_expr <- amount multiplier? (space+ currency)?
-  amount <- [\d]+
+  amount_expr <- amount multiplier? (@space+ currency)? %make_amount_expr
+  amount <- [\d]* ([.] [\d]*)?
   multiplier <- "k" / "m" / ""
   currency <- [a-z]{3}
 
