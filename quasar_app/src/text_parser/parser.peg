@@ -1,49 +1,37 @@
 grammar text_parser
-#  actions <- action ("\n" action)* %make_actions
-
-#  #line <- (!"\n" !" " !"\t" .) (!"\n" .)* %make_line
-#  line <- (!"\n" .) (!"\n" .)* %make_line
-#  action <- line ("\n" tab+ line)* %make_action
-
   statements <- statement ("\n" statement)* %make_statements
-  # ~~one_line is needed to prevent syntax error~~
-  # statement <- @space* ( meta / action ) @one_line @space* %make_statement
-  statement <- @space* action @space* %make_statement
+  statement <- @space* transaction @space* %make_statement
 
-  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~action~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~transaction~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  action <- (label space+)?    (time_expr space+)?   (reminder space+)*     (state space+)?     title
+  transaction <- (prefix space+)?    (date_expr space+)?   (account_expr space+)?     (amount_expr space+)?     title?
 
-  label <- noname_label / named_label
-  noname_label <- ([-+*] / [\d]+ ".") <NonameLabel>
-  named_label <- var_name "." <NamedLabel>
+  prefix <- ([-+*] / [\d]+ ".")
 
-  time_expr <- time_point (".." time_point)?
-  time_point <- [\d]+    # todo improve this
+  date_expr <- date_segment (@date_separator date_segment)? (@date_separator date_segment)?
+  date_segment <- [\d]+
+  date_separator <- [-./_]
 
-  reminder <- "!" ([+-]? [\d]+)?
+  account_expr <- (account space*)? @">" (space* account)?
+  account <- [^\s\d>] [^\s>]*
 
-  state <- @"[" state_value @"]"
-  state_value <- " " / "x" / "X" / var_name
+  amount_expr <- amount multiplier? (space+ currency)?
+  amount <- [\d]+
+  multiplier <- "k" / "m" / ""
+  currency <- [a-z]{3}
 
-  title <- title_segment (space* title_segment)* %make_title
+  title <- title_segment (space+ title_segment)* %make_title
+  # title_segment <- meta / word_plus
   title_segment <- meta / word_plus
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~meta~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  meta <- (key_value / tag / compact_form) <Meta>
+  meta <- key_value <Meta>
 
   key_value <- key ":" value
-  key <- "layer" / "location" / "kanban" / "date" / "bg" / "repeat" / "name" / "color" / "style" / "prefix" / "pin"
+  key <- "repeat"
   # here we make closing quote optional to prevent syntax error
   value <- @["] (!["\n] .)* @["]?  /  @['] (!['\n] .)* @[']?  /  (![ \n\t'"] .)*
-
-  tag_name <- "busy" / "bg" / var_name
-  tag <- "#" tag_name
-
-  compact_form <- compact_location / compact_action_name
-  compact_location <- "@" var_name <CompactLocation>
-  compact_action_name <- "$" var_name <CompactActionName>
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~low level~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -51,4 +39,3 @@ grammar text_parser
   space <- [^\S\r\n]
   word_plus <- (![\s] .)+
   var_name <- [A-Za-z] [A-Za-z0-9_]*
-  #one_line <- (![\n] .)*

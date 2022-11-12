@@ -17,18 +17,6 @@ export const types = {
   Meta: {
     is_meta: true,
   },
-  CompactLocation: {
-    compact_location() {
-      return this.elements[1].text
-    }
-  },
-  CompactActionName: {
-    compact_action_name() {
-      return this.elements[1].text
-    }
-  },
-  NonameLabel: {label_type() {return 'noname'}},
-  NamedLabel: {label_type() {return 'named'}},
 }
 
 function parse_meta(node){
@@ -47,34 +35,11 @@ function parse_meta(node){
       name: node.tag_name.text,
     }
   }
-  if (node?.compact_location) {
-    return {
-      type: 'key_value',
-      key: "location",
-      value: node.compact_location(),
-    }
-  }
-  if (node?.compact_action_name) {
-    return {
-      type: 'key_value',
-      key: "name",
-      value: node.compact_action_name(),
-    }
-  }
   throw "Failed to parse meta!"
 }
 
 export const actions = {
   make_statements: make_list_factory('statement'),
-
-//  make_action (input, start, end, elements) {
-//    let action = {
-//      title: elements[0],
-//      children: elements[1].elements.map(el => el.line)
-//    }
-//    console.log('elements', input.substring(start,end), elements)
-//    return action
-//  },
 
   make_statement (input, start, end, elements) {
     let statement = elements[0]
@@ -82,14 +47,11 @@ export const actions = {
     console.log('statement', statement)
 
     const statement_out = {
-      label: {
-        type: statement?.elements[0]?.label?.label_type(),
-        value: statement?.elements[0]?.label?.text,
-      },
-      time_expr: statement?.elements[1]?.time_expr?.text,
-      reminders: statement?.elements[2].elements.map(el => el.reminder.text),
-      state: statement?.elements[3]?.state?.state_value.text,
-      ...statement.title,
+      prefix: statement?.elements[0]?.prefix?.text,
+      date_expr: statement?.elements[1]?.date_expr?.text,
+      account_expr: statement?.elements[2].account_expr?.text,
+      amount_expr: statement?.elements[3]?.amount_expr?.text,
+      ...statement?.elements[4], // unpack title
     }
     return statement_out
   },

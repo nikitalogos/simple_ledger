@@ -9,13 +9,7 @@ const parse = (string) => text_parser.parse(string, { actions, types })
 export default defineComponent({
   data() {
     return {
-//      input_data: "2022-06-26 12:00..+1d4h !-30m !-5m [ ] Make report #busy @home" +
-//      "\n\t12:00 !-30min !-5min - start" +
-//      "\n\t+2h..+10m - take a break" +
-//      "\n\tstart+1d4h - finish",
-//      input_data: '$name\n@home\nab\nlayer:cd\nef:dd\nlayer:"afsda ffsdd"\nlayer:\'ddddd'
-//      input_data: '- 10..20 !30 [x] fdd\nbg:"dd"\n#busy'
-      input_data: '- I am #busy @home'
+        input_data: "- 2022.11.10 > 100k rub ",
     }
   },
   computed: {
