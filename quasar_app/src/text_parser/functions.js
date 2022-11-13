@@ -125,13 +125,15 @@ export const actions = {
   make_amount_expr(input, start, end, elements) {
     const default_currency = "rub"
 
+    const multiplier_str = elements[1].text
     const multiplier = {
       "": 1,
       "k": 1000,
       "m": 1000*1000,
-    }[elements[1].text]
+    }[multiplier_str]
 
-    const amount = parseFloat(elements[0].text) * multiplier
+    const amount_str = elements[0].text
+    const amount = parseFloat(amount_str) * multiplier
 
     const currency = elements[2].text
 
