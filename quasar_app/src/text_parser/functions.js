@@ -83,7 +83,7 @@ export const actions = {
       elements[1]?.date_segment?.text,
       elements[2]?.date_segment?.text,
     ]
-    segments = segments.map((el) => parseInt(el))
+    segments = segments.map((el) => el === undefined ? el : parseInt(el))
 
     let year, month, day
     if (segments[2] === undefined) {

@@ -1,6 +1,189 @@
-.json-viewer-custom {
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~global css variables~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// for colors adjustment: https://color.adobe.com/ru/create/color-wheel
+$text-color: #E9F6FB; // #c8c3bc;
+$link-color:  #77B4E6; // blue
+$bg-color: #333;
+$control-color: #bb86fc; // violet
+// #03dac5 // teal
+
+$font-size: 16px;
+
+$white-color: #fff;
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~html tags~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+body.body--dark {
+  color: $text-color;
+  background-color: $bg-color;
+  font-size: $font-size;
+
+  margin: 0;
+  overflow-x: hidden;
+
+  font-family: Raleway;
+
+  color-scheme: dark !important;
+
+
+  // Fix for mobile chrome browser. It fails to update background on scroll, when the page height changes
+  // solution: https://stackoverflow.com/questions/24944925/background-image-jumps-when-address-bar-hides-ios-android-mobile-chrome
+  &:before {
+    content: "";
+    display: block;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: calc(100% + 200px);
+    z-index: -10;
+    background-color: $bg-color;
+  }
+}
+
+select {
+  font-size: 1rem;
+}
+
+a {
+  color: $link-color;
+  text-decoration: none;
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~classes~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.label {
+  padding: 0 5px;
+  border: 1px solid;
+  border-radius: 5px;
+}
+
+.button {
+  margin: 0.5rem;
+  padding: 0.5rem;
+  height: fit-content;
+  font-weight: bold;
+
+  border: solid 1px transparent;
+  border-radius: 0.25rem;
+
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+
+  &:not(.disabled):hover {
+    border: 1px solid $white-color;
+  }
+  &.disabled {
+    cursor: default;
+    opacity: 0.2;
+    pointer-events: none; // disable onClick and other events on disabled button
+  }
+}
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~plugin components~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.json-viewer-custom-theme {
+  // ~~~~~~~~~~~~~~~~~~~~behaviour~~~~~~~~~~~~~~~~~~~~
   min-height: 200px;
   max-height: 800px;
   width: 100%;
   overflow: auto;
+
+  // ~~~~~~~~~~~~~~~~~~~~default "jv-light" theme turned into dark~~~~~~~~~~~~~~~~~~~~
+  background: $bg-color;
+  white-space: nowrap;
+  color: $white-color;
+  font-size: 14px;
+  font-family: Consolas, Menlo, Courier, monospace;
+
+  .jv-ellipsis {
+    color: $white-color;
+    background-color: #666;
+    display: inline-block;
+    line-height: 0.9;
+    font-size: 0.9em;
+    padding: 0px 4px 2px 4px;
+    border-radius: 3px;
+    vertical-align: 2px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .jv-button { color: $white-color }
+  .jv-key { color: $text-color }
+  .jv-item {
+    &.jv-array { color: $text-color }
+    &.jv-boolean { color: #fc1e70 }
+    &.jv-function { color: #067bca }
+    &.jv-number { color: #fc1e70 }
+    &.jv-number-float { color: #fc1e70 }
+    &.jv-number-integer { color: #fc1e70 }
+    &.jv-object { color: $text-color }
+    &.jv-undefined { color: #e08331 }
+    &.jv-string {
+      color: #af7;
+      word-break: break-word;
+      white-space: normal;
+    }
+  }
+  .jv-code {
+    .jv-toggle {
+      &:before {
+        padding: 0px 2px;
+        border-radius: 2px;
+      }
+      &:hover {
+        &:before {
+          background: #eee;
+        }
+      }
+    }
+  }
+}
+
+.toggle-custom {
+  // we need to encapsulate Toggle stylesheet, because otherwise it will break json-viewer styles
+  @import "@vueform/toggle/themes/default";
+
+  --toggle-bg-on: #f00;
+  --toggle-bg-off: #000;
+
+  --toggle-border-on: #f00;
+  --toggle-border-off: #000;
+
+  --toggle-handle-enabled: #fff;
+  --toggle-handle-disabled: #fff;
+}
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~fonts~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// how to specify font: https://stackoverflow.com/questions/11737168/how-to-import-fonts-in-css
+@font-face {
+  font-family: "Raleway";
+  src: url("src/assets/fonts/raleway/static/Raleway-Regular.ttf")
+    format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Raleway";
+  src: url("src/assets/fonts/raleway/static/Raleway-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Raleway";
+  src: url("src/assets/fonts/raleway/static/Raleway-Italic.ttf")
+    format("truetype");
+  font-weight: normal;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Raleway";
+  src: url("src/assets/fonts/raleway/static/Raleway-BoldItalic.ttf")
+    format("truetype");
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
 }

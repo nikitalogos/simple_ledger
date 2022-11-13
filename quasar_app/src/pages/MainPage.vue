@@ -1,18 +1,36 @@
 <template>
-  <div>
-    Hello world!
-
-    <TestWidget/>
+  <div class="h-flex">
+    <TextEditor/>
+    <ParseVisualizer/>
+    <ParseTree/>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
-import TestWidget from 'components/TestWidget.vue'
+import { defineComponent } from 'vue';
+import TextEditor from 'components/TextEditor.vue'
+import ParseVisualizer from 'components/ParseVisualizer.vue'
+import ParseTree from 'components/ParseTree.vue'
 
 export default defineComponent({
   components: {
-    TestWidget,
+    TextEditor,
+    ParseVisualizer,
+    ParseTree,
   }
 });
 </script>
+
+<style scoped lang="scss">
+
+.h-flex {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: start;
+
+  width: 100%;
+  padding: 20px;
+}
+
+</style>
