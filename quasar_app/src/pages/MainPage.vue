@@ -2,7 +2,6 @@
   <div class="h-flex">
     <TextEditor/>
     <ParseVisualizer/>
-    <ParseTree/>
   </div>
 </template>
 
@@ -16,7 +15,6 @@ export default defineComponent({
   components: {
     TextEditor,
     ParseVisualizer,
-    ParseTree,
   }
 });
 </script>

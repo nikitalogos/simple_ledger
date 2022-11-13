@@ -1,7 +1,5 @@
 function make_list_factory(label) {
   return (input, start, end, elements) => {
-    console.log('statements', elements)
-
     let list = []
     if (elements?.[0]) {
       list.push(elements[0])
@@ -45,8 +43,6 @@ export const actions = {
 
   make_statement (input, start, end, elements) {
     let statement = elements[0]
-
-    console.log('statement', statement)
 
     const statement_out = {
 //      prefix: statement?.elements[0]?.prefix?.text,
@@ -149,10 +145,11 @@ export const actions = {
 
     const meta = segments.filter(seg => seg?.is_meta).map(seg => parse_meta(seg))
 
-    const title = {text, meta} // segments
-    title.is_pure_meta = (meta.length == segments.length)
-
-    console.log('title', title)
+    const title = {
+      text,
+      meta,
+      is_pure_meta: meta.length == segments.length
+    }
     return title
   },
 }

@@ -20,8 +20,6 @@ body.body--dark {
   margin: 0;
   overflow-x: hidden;
 
-  font-family: Raleway;
-
   color-scheme: dark !important;
 
 
@@ -54,6 +52,10 @@ a {
   padding: 0 5px;
   border: 1px solid;
   border-radius: 5px;
+
+  &.disabled {
+    opacity: 0.2;
+  }
 }
 
 .button {
