@@ -33,9 +33,8 @@ export default defineComponent({
       if (!this.el_width) {
         return null
       }
-      const separator_width = 4
       const container_size = this.is_vertical ? this.el_height : this.el_width
-      return container_size - this.part1_size - separator_width
+      return container_size - this.part1_size
     },
   },
   methods: {
@@ -100,7 +99,7 @@ export default defineComponent({
     <div class="separator" :class="{is_vertical: is_vertical}" @pointerdown="start_drag($event)"></div>
 
     <div v-if="is_vertical" class="part bottom" :style="{height: `${part2_size}px`}">
-      <slot name="part1"></slot>
+      <slot name="part2"></slot>
     </div>
     <div v-else class="part right" :style="{width: `${part2_size}px`}">
       <slot name="part2"></slot>
@@ -113,8 +112,6 @@ export default defineComponent({
   display: flex;
   width: 100%;
   height: 100%;
-  border: 2px solid var(--border-color);
-  margin: -2px;
 
   &.is_vertical {
     flex-direction: column;
@@ -125,6 +122,7 @@ export default defineComponent({
     min-height: 100px;
     width: 100%;
     height: 100%;
+    background-color: var(--bg-color);
 
     &.left {
       padding-right: 2px;
