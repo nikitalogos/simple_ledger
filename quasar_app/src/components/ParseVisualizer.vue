@@ -112,6 +112,8 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .tr-list {
+  height: 100%;
+
   font-size: 0.85rem;
 
   display: flex;

@@ -4,7 +4,8 @@ grammar text_parser
 
   # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~transaction~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  transaction <- (prefix space+)?    (date_expr space+)?   (account_expr space+)?     (amount_expr space+)?     title?
+  transaction <- (prefix space+)?    (date_expr space+)?   (account_expr space+)?     (amount_expr space*)?     title?
+  # after amount_expr should be space*, not space+!
 
   prefix <- ([-+*] / [\d]+ ".")
 
@@ -16,7 +17,7 @@ grammar text_parser
   account <- [^\s\d>] [^\s>]*
 
   amount_expr <- amount multiplier? (@space+ currency)? %make_amount_expr
-  amount <- [\d]* ([.] [\d]*)?
+  amount <- &[\d.] [\d]* ([.] [\d]*)?
   multiplier <- "k" / "m" / ""
   currency <- [a-z]{3}
 

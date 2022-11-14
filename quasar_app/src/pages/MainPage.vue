@@ -42,6 +42,8 @@ export default defineComponent({
     TextEditor,
     ParseVisualizer,
     GraphView,
+
+//    ParseTree,
   }
 });
 </script>

@@ -44,12 +44,14 @@ export const actions = {
   make_statement (input, start, end, elements) {
     let statement = elements[0]
 
+    //console.log('statement', statement)
+
     const statement_out = {
 //      prefix: statement?.elements[0]?.prefix?.text,
       date_expr: statement?.elements[1]?.date_expr,
       account_expr: statement?.elements[2]?.account_expr,
       amount_expr: statement?.elements[3]?.amount_expr,
-      ...statement?.elements[4], // unpack title
+      title: statement?.elements[4]?.title,
     }
     return statement_out
   },
@@ -145,12 +147,11 @@ export const actions = {
 
     const meta = segments.filter(seg => seg?.is_meta).map(seg => parse_meta(seg))
 
-    const title = {
+    return {
       text,
       meta,
       is_pure_meta: meta.length == segments.length
     }
-    return title
   },
 }
 
