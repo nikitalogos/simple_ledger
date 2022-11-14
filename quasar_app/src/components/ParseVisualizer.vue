@@ -116,8 +116,6 @@ export default defineComponent({
 
   display: flex;
   flex-direction: column;
-  width: 50%;
-  padding-left: 10px;
 
   overflow-x: scroll;
 

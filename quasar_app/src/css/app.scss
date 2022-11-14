@@ -1,21 +1,25 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~global css variables~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // for colors adjustment: https://color.adobe.com/ru/create/color-wheel
-$text-color: #E9F6FB; // #c8c3bc;
-$link-color:  #77B4E6; // blue
-$bg-color: #333;
-$control-color: #bb86fc; // violet
-// #03dac5 // teal
+:root {
+  // theme
+  --text-color: #E9F6FB; // #c8c3bc;
+  --link-color:  #77B4E6;
+  --bg-color: #333;
+  --border-color: #666;
+  --control-color: #bb86fc; // violet
+  // #03dac5 // teal
 
-$font-size: 16px;
+  --font-size: 16px;
+}
 
 $white-color: #fff;
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~html tags~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 body.body--dark {
-  color: $text-color;
-  background-color: $bg-color;
-  font-size: $font-size;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+  font-size: var(--font-size);
 
   margin: 0;
   overflow-x: hidden;
@@ -34,7 +38,7 @@ body.body--dark {
     width: 100%;
     height: calc(100% + 200px);
     z-index: -10;
-    background-color: $bg-color;
+    background-color: var(--bg-color);
   }
 }
 
@@ -43,7 +47,7 @@ select {
 }
 
 a {
-  color: $link-color;
+  color: var(--link-color);
   text-decoration: none;
 }
 
@@ -91,7 +95,7 @@ a {
   overflow: auto;
 
   // ~~~~~~~~~~~~~~~~~~~~default "jv-light" theme turned into dark~~~~~~~~~~~~~~~~~~~~
-  background: $bg-color;
+  background: var(--bg-color);
   white-space: nowrap;
   color: $white-color;
   font-size: 14px;
@@ -110,15 +114,15 @@ a {
     user-select: none;
   }
   .jv-button { color: $white-color }
-  .jv-key { color: $text-color }
+  .jv-key { color: var(--text-color) }
   .jv-item {
-    &.jv-array { color: $text-color }
+    &.jv-array { color: var(--text-color) }
     &.jv-boolean { color: #fc1e70 }
     &.jv-function { color: #067bca }
     &.jv-number { color: #fc1e70 }
     &.jv-number-float { color: #fc1e70 }
     &.jv-number-integer { color: #fc1e70 }
-    &.jv-object { color: $text-color }
+    &.jv-object { color: var(--text-color) }
     &.jv-undefined { color: #e08331 }
     &.jv-string {
       color: #af7;

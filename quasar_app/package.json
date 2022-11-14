@@ -13,6 +13,7 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "@vueform/toggle": "^2.1.2",
+    "debounce": "^1.2.1",
     "moment": "^2.29.4",
     "pinia": "^2.0.16",
     "quasar": "^2.6.0",
