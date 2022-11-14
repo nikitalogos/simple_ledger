@@ -1,7 +1,14 @@
 <template>
   <SplitScreen :is_vertical="false" id="h1">
-    <template v-slot:part1> <TextEditor/> </template>
-    <template v-slot:part2> <ParseVisualizer/> </template>
+    <template v-slot:part1>
+      <TextEditor/>
+    </template>
+    <template v-slot:part2>
+      <SplitScreen :is_vertical="true" id="h2">
+        <template v-slot:part1> <ParseVisualizer/> </template>
+        <template v-slot:part2> <ParseVisualizer/> </template>
+      </SplitScreen>
+    </template>
   </SplitScreen>
 </template>
 

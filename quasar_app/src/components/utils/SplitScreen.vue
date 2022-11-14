@@ -2,8 +2,6 @@
 import { defineComponent } from 'vue';
 import { debounce } from 'debounce'
 
-import { useScreenSizes } from 'src/composables/screen_sizes.ts'
-
 export default defineComponent({
   props: {
     is_vertical: {
@@ -13,26 +11,41 @@ export default defineComponent({
     id: {
       type: String,
       required: true,
-    }
+    },
+    init_part1_size: {
+      type: Number,
+      default: 500,
+    },
   },
   data() {
     return {
+      el_width: null,
+      el_height: null,
       part1_size: null,
-      last_mouse_x: null,
+      last_mouse_pos: null,
     }
   },
   computed: {
-    local_storage_key() {
-      return `${this.id}_part1_size`
+    full_id() {
+      return `split_screen_${this.id}`
     },
     part2_size() {
-      const separator_width = 10
-      return this.screen_sizes.client_w - this.part1_size - separator_width
+      if (!this.el_width) {
+        return null
+      }
+      const separator_width = 4
+      const container_size = this.is_vertical ? this.el_height : this.el_width
+      return container_size - this.part1_size - separator_width
     },
   },
   methods: {
+    update_el_size() {
+      const rect = document.getElementById(this.full_id)?.getBoundingClientRect()
+      this.el_width = rect?.width
+      this.el_height = rect?.height
+    },
     start_drag(event) {
-      this.last_mouse_x = event.clientX
+      this.last_mouse_pos = this.is_vertical ? event.clientY : event.clientX
 
       // bind mouse events to resizer element until mouse up
       const element = event.target
@@ -43,8 +56,9 @@ export default defineComponent({
       window.addEventListener("pointerup", this.stop_drag);
     },
     drag (event) {
-      const offset = event.clientX - this.last_mouse_x
-      this.last_mouse_x = event.clientX
+      const mouse_pos = this.is_vertical ? event.clientY : event.clientX
+      const offset = mouse_pos - this.last_mouse_pos
+      this.last_mouse_pos = mouse_pos
 
       this.part1_size += offset
     },
@@ -60,25 +74,35 @@ export default defineComponent({
     }
   },
   created() {
-    const { screen_sizes } = useScreenSizes()
-    this.screen_sizes = screen_sizes
+    setInterval(this.update_el_size, 100)
 
     // make method
-    this.save_part1_size = debounce((v) => localStorage.setItem(this.local_storage_key, v), 100)
+    this.save_part1_size = debounce((v) => localStorage.setItem(this.full_id, v), 100)
 
-    const part1_size = localStorage.getItem(this.local_storage_key)
-    this.part1_size = part1_size ? Number(part1_size) : 600
+    const part1_size = localStorage.getItem(this.full_id)
+    this.part1_size = part1_size ? Number(part1_size) : this.init_part1_size
+  },
+  mounted(){
+    this.update_el_size()
   },
 });
 </script>
 
 <template>
-  <div class="split-screen-container">
-    <div class="part" :style="{width: `${part1_size}px`}">
+  <div class="split-screen-container" :class="{is_vertical: is_vertical}" :id="full_id">
+    <div v-if="is_vertical" class="part top" :style="{height: `${part1_size}px`}">
       <slot name="part1"></slot>
     </div>
-    <div class="separator" @pointerdown="start_drag($event)"></div>
-    <div class="part" :style="{width: `${part2_size}px`}">
+    <div v-else class="part left" :style="{width: `${part1_size}px`}">
+      <slot name="part1"></slot>
+    </div>
+
+    <div class="separator" :class="{is_vertical: is_vertical}" @pointerdown="start_drag($event)"></div>
+
+    <div v-if="is_vertical" class="part bottom" :style="{height: `${part2_size}px`}">
+      <slot name="part1"></slot>
+    </div>
+    <div v-else class="part right" :style="{width: `${part2_size}px`}">
       <slot name="part2"></slot>
     </div>
   </div>
@@ -89,28 +113,59 @@ export default defineComponent({
   display: flex;
   width: 100%;
   height: 100%;
-  border: 1px solid var(--border-color);
+  border: 2px solid var(--border-color);
+  margin: -2px;
+
+  &.is_vertical {
+    flex-direction: column;
+  }
 
   .part {
     min-width: 100px;
     min-height: 100px;
     width: 100%;
     height: 100%;
-    padding: 2px;
+
+    &.left {
+      padding-right: 2px;
+    }
+    &.right {
+      padding-left: 2px;
+    }
+    &.top {
+      padding-bottom: 2px;
+    }
+    &.bottom {
+      padding-top: 2px;
+    }
   }
 
   .separator {
-    margin-left: -2px;
-    margin-right: -2px;
-    width: 4px;
-    min-width: 4px;
     align-self: stretch; // take up full height of flexbox container
 
     background-color: var(--border-color);
 
+    z-index: 1000;
+
     &:hover {
       background-color: var(--control-color);
       cursor: col-resize;
+    }
+    &:hover.is_vertical {
+      cursor: row-resize;
+    }
+
+    &.is_vertical {
+      margin-top: -2px;
+      margin-bottom: -2px;
+      height: 4px;
+      min-height: 4px;
+    }
+    &:not(.is_vertical) {
+      margin-left: -2px;
+      margin-right: -2px;
+      width: 4px;
+      min-width: 4px;
     }
   }
 }
