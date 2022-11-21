@@ -2,14 +2,15 @@
 import { defineComponent } from 'vue';
 import { debounce } from 'debounce'
 
+import self_size_mixin from 'src/mixins/self_size_mixin.js'
+
 export default defineComponent({
+  mixins: [
+    self_size_mixin,
+  ],
   props: {
     is_vertical: {
       type: Boolean,
-      required: true,
-    },
-    id: {
-      type: String,
       required: true,
     },
     init_part1_size: {
@@ -19,16 +20,11 @@ export default defineComponent({
   },
   data() {
     return {
-      el_width: null,
-      el_height: null,
       part1_size: null,
       last_mouse_pos: null,
     }
   },
   computed: {
-    full_id() {
-      return `split_screen_${this.id}`
-    },
     part2_size() {
       if (!this.el_width) {
         return null
@@ -38,11 +34,6 @@ export default defineComponent({
     },
   },
   methods: {
-    update_el_size() {
-      const rect = document.getElementById(this.full_id)?.getBoundingClientRect()
-      this.el_width = rect?.width
-      this.el_height = rect?.height
-    },
     start_drag(event) {
       this.last_mouse_pos = this.is_vertical ? event.clientY : event.clientX
 
@@ -73,22 +64,17 @@ export default defineComponent({
     }
   },
   created() {
-    setInterval(this.update_el_size, 100)
-
     // make method
-    this.save_part1_size = debounce((v) => localStorage.setItem(this.full_id, v), 100)
+    this.save_part1_size = debounce((v) => localStorage.setItem(this.id, v), 100)
 
-    const part1_size = localStorage.getItem(this.full_id)
+    const part1_size = localStorage.getItem(this.id)
     this.part1_size = part1_size ? Number(part1_size) : this.init_part1_size
-  },
-  mounted(){
-    this.update_el_size()
   },
 });
 </script>
 
 <template>
-  <div class="split-screen-container" :class="{is_vertical: is_vertical}" :id="full_id">
+  <div class="split-screen-container" :class="{is_vertical: is_vertical}" :id="id">
     <div v-if="is_vertical" class="part top" :style="{height: `${part1_size}px`}">
       <slot name="part1"></slot>
     </div>

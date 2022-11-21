@@ -1,21 +1,21 @@
 <template>
-  <SplitScreen style="height: 100vh" :is_vertical="false" id="h">
+  <SplitScreen style="height: 100vh" :is_vertical="false" id="split_screen_h">
 
     <template v-slot:part1>
       <AccountsPartition/>
     </template>
     <template v-slot:part2>
-      <SplitScreen :is_vertical="true" id="h2_v">
+      <SplitScreen :is_vertical="true" id="split_screen_h2_v">
 
         <template v-slot:part1>
-          <SplitScreen :is_vertical="false" id="h2_v1_h">
+          <SplitScreen :is_vertical="false" id="split_screen_h2_v1_h">
 
             <template v-slot:part1> <TextEditor/> </template>
             <template v-slot:part2> <ParseVisualizer/> </template>
 
           </SplitScreen>
         </template>
-        <template v-slot:part2> <GraphView/> </template>
+        <template v-slot:part2> <GraphView id="graph_view"/> </template>
 
       </SplitScreen>
     </template>
