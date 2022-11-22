@@ -9,6 +9,8 @@ export default {
     return {
       el_width: null,
       el_height: null,
+      el_left: null,
+      el_top: null,
     }
   },
   methods: {
@@ -16,6 +18,8 @@ export default {
       const rect = document.getElementById(this.id)?.getBoundingClientRect()
       this.el_width = rect?.width
       this.el_height = rect?.height
+      this.el_left = rect?.left
+      this.el_top = rect?.top
     },
   },
   created() {
