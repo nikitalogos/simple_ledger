@@ -68,10 +68,12 @@ export default defineComponent({
   flex-direction: row;
   align-items: center;
 
+  line-height: 1.1rem;
+
   .cal-year {
     box-sizing: border-box;
     border-right: 1px solid;
-    overflow-x: hidden;
+    overflow: hidden;
 
     user-select: none;
 

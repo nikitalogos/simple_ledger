@@ -6,6 +6,7 @@ import self_size_mixin from 'src/mixins/self_size_mixin.js'
 
 import YearLine from 'components/calendar/YearLine.vue'
 import MonthLine from 'components/calendar/MonthLine.vue'
+import DayLine from 'components/calendar/DayLine.vue'
 
 export default defineComponent({
   mixins: [
@@ -14,6 +15,7 @@ export default defineComponent({
   components: {
     YearLine,
     MonthLine,
+    DayLine,
   },
   data (){
     return {
@@ -74,7 +76,8 @@ export default defineComponent({
     reset_zoom(){
       this.start_time = Date.now()
 //      this.duration = 1000 * 3600 * 24  // one day in ms
-      this.duration = 1000 * 3600 * 24 * 30 * 12 * 2  // 2 years in ms
+      this.duration = 1000 * 3600 * 24 * 30 * 3 // three months in ms
+//      this.duration = 1000 * 3600 * 24 * 30 * 12 * 2  // 2 years in ms
     },
     add_listener() {
       const el = document.getElementById(this.id)
@@ -93,6 +96,7 @@ export default defineComponent({
     {{ start_mdate.format('YYYY-MM-DD') }} - {{ end_mdate.format('YYYY-MM-DD') }}
     <YearLine :start_mdate="start_mdate" :end_mdate="end_mdate"/>
     <MonthLine :start_mdate="start_mdate" :end_mdate="end_mdate"/>
+    <DayLine :start_mdate="start_mdate" :end_mdate="end_mdate"/>
     <div class="gv-canvas"></div>
   </div>
 </template>

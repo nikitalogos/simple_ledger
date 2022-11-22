@@ -85,12 +85,12 @@ export default defineComponent({
   flex-direction: row;
   align-items: center;
 
-  height: 1rem;
+  line-height: 1.1rem;
 
   .cal-month {
     box-sizing: border-box;
     border-right: 1px solid;
-    overflow-x: hidden;
+    overflow: hidden;
 
     user-select: none;
 

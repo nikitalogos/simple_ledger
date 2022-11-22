@@ -22,6 +22,12 @@ export default {
     end_month(){
       return this.end_mdate.month()
     },
+    start_day(){
+      return this.start_mdate.date()
+    },
+    end_day(){
+      return this.end_mdate.date()
+    },
   },
   methods: {
     days_in_year(year) {
@@ -50,7 +56,15 @@ export default {
       const mdate2 = mdate.clone()
 
       let total_ms
-      if (unit === 'month') {
+      if (unit === 'day') {
+        mdate2.set({
+          'hour': 0,
+          'minute': 0,
+          'second': 0,
+          'millisecond': 0
+        })
+        total_ms = 1000 * 3600 * 24
+      } else if (unit === 'month') {
         mdate2.set({
           'date': 1,
           'hour': 0,
