@@ -5,6 +5,7 @@ import moment from "moment"
 import self_size_mixin from 'src/mixins/self_size_mixin.js'
 
 import YearLine from 'components/calendar/YearLine.vue'
+import MonthLine from 'components/calendar/MonthLine.vue'
 
 export default defineComponent({
   mixins: [
@@ -12,9 +13,11 @@ export default defineComponent({
   ],
   components: {
     YearLine,
+    MonthLine,
   },
   data (){
     return {
+      max_duration: 1000 * 3600 * 24 * 30 * 12 * 10,  // 10 years in ms
       duration: 0,
       start_time: 0,
       last_mouse_x: 0,
@@ -61,14 +64,17 @@ export default defineComponent({
       let is_scroll_down = event.deltaY > 0
       let zoom_speed = 1.01
       let zoom_value = is_scroll_down ? zoom_speed : 1/zoom_speed
-      this.duration *= zoom_value
+      const duration = this.duration * zoom_value
 
-      this.start_time += pivot * (1 - zoom_value)
+      if (duration < this.max_duration) {
+        this.duration = duration
+        this.start_time += pivot * (1 - zoom_value)
+      }
     },
     reset_zoom(){
       this.start_time = Date.now()
 //      this.duration = 1000 * 3600 * 24  // one day in ms
-      this.duration = 1000 * 3600 * 24 * 30 * 12 * 10  // 100 years in ms
+      this.duration = 1000 * 3600 * 24 * 30 * 12 * 2  // 2 years in ms
     },
     add_listener() {
       const el = document.getElementById(this.id)
@@ -84,7 +90,9 @@ export default defineComponent({
 
 <template>
   <div :id="id" class="gv-container" @pointerdown="start_drag($event)">
+    {{ start_mdate.format('YYYY-MM-DD') }} - {{ end_mdate.format('YYYY-MM-DD') }}
     <YearLine :start_mdate="start_mdate" :end_mdate="end_mdate"/>
+    <MonthLine :start_mdate="start_mdate" :end_mdate="end_mdate"/>
     <div class="gv-canvas"></div>
   </div>
 </template>

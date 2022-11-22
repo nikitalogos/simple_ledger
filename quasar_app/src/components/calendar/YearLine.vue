@@ -2,17 +2,10 @@
 import { defineComponent } from 'vue';
 import moment from "moment"
 
-//import self_size_mixin from 'src/mixins/self_size_mixin.js'
-
-function daysInYear(year) {
-    return ((year % 4 === 0 && year % 100 > 0) || year %400 == 0) ? 366 : 365;
-}
+import { daysInYear, isLeapYear } from 'src/components/calendar/calendar_utils.js'
 
 
 export default defineComponent({
-//  mixins: [
-//    self_size_mixin,
-//  ],
   props: {
     start_mdate: {
       type: Object,
@@ -32,41 +25,42 @@ export default defineComponent({
     },
     years() {
       const years = []
-      for (let i = this.start_year; i <= this.end_year; i++){
-        years.push(i)
-      }
-      return years
-    },
-    fractions() {
-      const fractions = []
-      for (let i = this.start_year; i <= this.end_year; i++){
+      for (let year = this.start_year; year <= this.end_year; year++){
         let fraction
-        if (i === this.start_year) {
-          if (i === this.end_year) {
+        if (year === this.start_year) {
+          if (year === this.end_year) {
             fraction = 1
           } else {
             const day_of_year = this.start_mdate.dayOfYear() // 1..365/366
-            const total_days = daysInYear(this.start_mdate.year()) // 365/366
+            const total_days = daysInYear(year) // 365/366
             fraction = (total_days + 1 - day_of_year) / total_days // 0 < x <= 1
           }
         } else {
-          if (i === this.end_year) {
+          if (year === this.end_year) {
             const day_of_year = this.end_mdate.dayOfYear() // 1..365/366
-            const total_days = daysInYear(this.end_mdate.year()) // 365/366
+            const total_days = daysInYear(year) // 365/366
             fraction = day_of_year / total_days // 0 < x <= 1
           } else {
             fraction = 1
           }
         }
-        fractions.push(fraction)
+
+        years.push( {year, fraction} )
       }
-      return fractions
+      // flex-grow fix that if fractions sum < 1 two elements don't take up the full space
+      if (years.length === 2){
+        const fractions = [years[0].fraction, years[1].fraction]
+        const divider =  Math.min(...fractions)
+        years[0].fraction = fractions[0] / divider
+        years[1].fraction = fractions[1] / divider
+      }
+      return years
     },
   },
   methods: {
-    daysInYear,
-    get_this_year(){
-      return moment().year()
+    isLeapYear,
+    is_this_year(year){
+      return moment().year() === year
     }
   }
 });
@@ -78,16 +72,16 @@ export default defineComponent({
       class="cal-year"
       v-for="(year, idx) in years"
       :key="idx"
-      :style="{flex: fractions[idx]}"
+      :style="{flex: year.fraction}"
     >
-      <span
+      <div
         :class="{
-          this_year: year === get_this_year(),
-          leap_year: daysInYear(year) === 366,
+          this_year: is_this_year(year.year),
+          leap_year: isLeapYear(year.year),
         }"
       >
-        {{ year }}
-      </span>
+        {{ year.year }}
+      </div>
     </div>
   </div>
 </template>
@@ -98,17 +92,18 @@ export default defineComponent({
   flex-direction: row;
   align-items: center;
 
-  height: 1rem;
-
   .cal-year {
+    box-sizing: border-box;
+    border-right: 1px solid;
     overflow-x: hidden;
 
-    border-right: 1px solid;
+    user-select: none;
 
     text-align: center;
 
     .this_year {
-      color: red;
+      color: var(--highlight-color);
+      font-weight: bold;
     }
     .leap_year {
       text-decoration: underline;
