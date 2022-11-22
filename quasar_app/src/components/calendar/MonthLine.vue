@@ -2,32 +2,14 @@
 import { defineComponent } from 'vue';
 import moment from "moment"
 
+import calendar_line_mixin from 'src/components/calendar/calendar_line_mixin.js'
+
 
 export default defineComponent({
-  props: {
-    start_mdate: {
-      type: Object,
-      required: true,
-    },
-    end_mdate: {
-      type: Object,
-      required: true,
-    },
-  },
+  mixins: [
+    calendar_line_mixin,
+  ],
   computed: {
-    start_year(){
-      return this.start_mdate.year()
-    },
-    end_year(){
-      return this.end_mdate.year()
-    },
-    start_month(){
-      return this.start_mdate.month()
-    },
-    end_month(){
-      return this.end_mdate.month()
-    },
-
     months() {
       const months = []
       for (let year = this.start_year; year <= this.end_year; year++){
@@ -47,15 +29,11 @@ export default defineComponent({
             if (is_last_month) {
               fraction = 1
             } else {
-              const day_of_month = this.start_mdate.date() // 1..31
-              const total_days = this.start_mdate.daysInMonth() // 28..31
-              fraction = (total_days + 1 - day_of_month) / total_days // 0 < x <= 1
+              fraction = this.calc_fraction('month', true, this.start_mdate)
             }
           } else {
             if (is_last_month) {
-              const day_of_month = this.end_mdate.date() // 1..31
-              const total_days = this.end_mdate.daysInMonth() // 28..31
-              fraction = day_of_month / total_days // 0 < x <= 1
+              fraction = this.calc_fraction('month', false, this.end_mdate)
             } else {
               fraction = 1
             }
@@ -65,6 +43,7 @@ export default defineComponent({
           months.push( {year, month, fraction, month_str} )
         }
       }
+      this.fix_fractions_if_2_items(months)
       return months
     },
   },
@@ -72,6 +51,9 @@ export default defineComponent({
     is_this_month(year, month){
       const m = moment()
       return m.year() === year && m.month() === month
+    },
+    is_long_month(year, month){
+      return this.days_in_month(year, month) === 31
     }
   }
 });
@@ -88,6 +70,7 @@ export default defineComponent({
       <span
         :class="{
           this_month: is_this_month(month.year, month.month),
+          long_month: is_long_month(month.year, month.month)
         }"
       >
         {{ month.month_str }}
@@ -116,6 +99,9 @@ export default defineComponent({
     .this_month {
       color: var(--highlight-color);
       font-weight: bold;
+    }
+    .long_month {
+      text-decoration: underline;
     }
   }
 }
