@@ -13,20 +13,12 @@ export default defineComponent({
     years() {
       const years = []
       for (let year = this.start_year; year <= this.end_year; year++){
-        let fraction
-        if (year === this.start_year) {
-          if (year === this.end_year) {
-            fraction = 1
-          } else {
-            fraction = this.calc_fraction('year', true, this.start_mdate)
-          }
-        } else {
-          if (year === this.end_year) {
-            fraction = this.calc_fraction('year', false, this.end_mdate)
-          } else {
-            fraction = 1
-          }
-        }
+        const is_first = (year === this.start_year)
+        const is_last = (year === this.end_year)
+
+        const mdate = is_last? this.end_mdate.clone() : this.start_mdate.clone()
+        mdate.set({year})
+        const fraction = this.calc_fraction_ms('year', is_first, is_last, mdate)
 
         years.push( {year, fraction} )
       }

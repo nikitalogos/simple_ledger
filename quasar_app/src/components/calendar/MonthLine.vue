@@ -21,23 +21,13 @@ export default defineComponent({
             continue
           }
 
-          let fraction
-          const is_first_month = (year === this.start_year && month === this.start_month)
-          const is_last_month = (year === this.end_year && month === this.end_month)
+          const is_first = (year === this.start_year && month === this.start_month)
+          const is_last = (year === this.end_year && month === this.end_month)
 
-          if (is_first_month) {
-            if (is_last_month) {
-              fraction = 1
-            } else {
-              fraction = this.calc_fraction('month', true, this.start_mdate)
-            }
-          } else {
-            if (is_last_month) {
-              fraction = this.calc_fraction('month', false, this.end_mdate)
-            } else {
-              fraction = 1
-            }
-          }
+          const mdate = is_last? this.end_mdate.clone() : this.start_mdate.clone()
+          mdate.set({year, month})
+          const fraction = this.calc_fraction_ms('month', is_first, is_last, mdate)
+
           const month_str = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][month]
 
           months.push( {year, month, fraction, month_str} )

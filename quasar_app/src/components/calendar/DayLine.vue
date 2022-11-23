@@ -28,23 +28,12 @@ export default defineComponent({
               continue
             }
 
-            let fraction
-            const is_first_day = (year === this.start_year && month === this.start_month && day === this.start_day)
-            const is_last_day = (year === this.end_year && month === this.end_month && day === this.end_day)
+            const is_first = (year === this.start_year && month === this.start_month && day === this.start_day)
+            const is_last = (year === this.end_year && month === this.end_month && day === this.end_day)
 
-            if (is_first_day) {
-              if (is_last_day) {
-                fraction = 1
-              } else {
-                fraction = this.calc_fraction('day', true, this.start_mdate)
-              }
-            } else {
-              if (is_last_day) {
-                fraction = this.calc_fraction('day', false, this.end_mdate)
-              } else {
-                fraction = 1
-              }
-            }
+            const mdate = is_last? this.end_mdate.clone() : this.start_mdate.clone()
+            mdate.set({year, month, day})
+            const fraction = this.calc_fraction_ms('day', is_first, is_last, mdate)
 
             days.push( {year, month, day, fraction} )
           }

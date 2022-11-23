@@ -52,48 +52,48 @@ export default {
         11: 31
       }[month]
     },
-    calc_fraction(unit, is_first, mdate) {
+    calc_fraction_ms(unit, is_first, is_last, mdate) {
       const mdate2 = mdate.clone()
 
       let total_ms
       if (unit === 'day') {
         mdate2.set({
-          'hour': 0,
-          'minute': 0,
-          'second': 0,
-          'millisecond': 0
+          hour: 0,
+          minute: 0,
+          second: 0,
+          millisecond: 0
         })
         total_ms = 1000 * 3600 * 24
       } else if (unit === 'month') {
         mdate2.set({
-          'date': 1,
-          'hour': 0,
-          'minute': 0,
-          'second': 0,
-          'millisecond': 0
+          date: 1,
+          hour: 0,
+          minute: 0,
+          second: 0,
+          millisecond: 0
         })
         total_ms = 1000 * 3600 * 24 * mdate.daysInMonth()
       } else if (unit === 'year') {
         mdate2.set({
-          'month': 0,
-          'date': 1,
-          'hour': 0,
-          'minute': 0,
-          'second': 0,
-          'millisecond': 0
+          month: 0,
+          date: 1,
+          hour: 0,
+          minute: 0,
+          second: 0,
+          millisecond: 0
         })
         total_ms = 1000 * 3600 * 24 * this.days_in_year(mdate.year())
       }
 
       const diff_ms = (mdate.unix() - mdate2.unix()) * 1000 + mdate.millisecond()
 
-      let fraction
       if (is_first){
-        fraction = (total_ms + 1 - diff_ms) / total_ms // 0 < x <= 1
+        return total_ms + 1 - diff_ms
+      } else if (is_last) {
+        return diff_ms
       } else {
-        fraction = diff_ms / total_ms // 0 < x <= 1
+        return total_ms
       }
-      return fraction
     },
     fix_fractions_if_2_items(items) {
       // flex-grow fix that if fractions sum < 1 two elements don't take up the full space

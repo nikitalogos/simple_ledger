@@ -75,8 +75,8 @@ export default defineComponent({
     },
     reset_zoom(){
       this.start_time = Date.now()
-//      this.duration = 1000 * 3600 * 24  // one day in ms
-      this.duration = 1000 * 3600 * 24 * 30 * 3 // three months in ms
+      this.duration = 1000 * 3600 * 24 * 10 // one day in ms
+//      this.duration = 1000 * 3600 * 24 * 30 * 3 // three months in ms
 //      this.duration = 1000 * 3600 * 24 * 30 * 12 * 2  // 2 years in ms
     },
     add_listener() {
@@ -93,7 +93,7 @@ export default defineComponent({
 
 <template>
   <div :id="id" class="gv-container" @pointerdown="start_drag($event)">
-    {{ start_mdate.format('YYYY-MM-DD') }} - {{ end_mdate.format('YYYY-MM-DD') }}
+    {{ start_mdate.format('YYYY-MM-DD HH:mm') }} - {{ end_mdate.format('YYYY-MM-DD HH:mm') }}
     <YearLine :start_mdate="start_mdate" :end_mdate="end_mdate"/>
     <MonthLine :start_mdate="start_mdate" :end_mdate="end_mdate"/>
     <DayLine :start_mdate="start_mdate" :end_mdate="end_mdate"/>
