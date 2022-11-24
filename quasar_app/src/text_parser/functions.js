@@ -1,3 +1,5 @@
+import moment from "moment"
+
 function make_list_factory(label) {
   return (input, start, end, elements) => {
     let list = []
@@ -56,17 +58,6 @@ export const actions = {
     return statement_out
   },
 
-  make_account_expr(input, start, end, elements) {
-    const default_acc = "card_rub"
-
-    const acc_from = elements[0].text
-    const acc_to = elements[1].text
-    return {
-      acc_from: acc_from !== "" ? acc_from : default_acc,
-      acc_to: acc_to !== "" ? acc_to : default_acc,
-    }
-  },
-
   make_date_expr(input, start, end, elements) {
     const today = new Date()
     const default_year = today.getFullYear()
@@ -115,8 +106,19 @@ export const actions = {
     }
 
     return {
-      date: new Date(year=year_c, month=month_c-1, day=day_c),
+      mdate: moment([year_c, month_c-1, day_c]),
       error,
+    }
+  },
+
+  make_account_expr(input, start, end, elements) {
+    const default_acc = "card_rub"
+
+    const acc_from = elements[0].text
+    const acc_to = elements[1].text
+    return {
+      acc_from: acc_from !== "" ? acc_from : default_acc,
+      acc_to: acc_to !== "" ? acc_to : default_acc,
     }
   },
 

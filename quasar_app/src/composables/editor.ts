@@ -36,7 +36,24 @@ editor.parse_tree = computed(() => {
   return p
 })
 editor.transactions = computed(() => {
-  return editor.parse_tree
+  const transactions = []
+  this.editor.parse_tree.forEach((item) => {
+    const date_expr = item.date_expr
+    const account_expr = item.account_expr
+    const amount_expr = item.amount_expr
+
+    if (!date_expr || date_expr.error || !account_expr || !amount_expr) {
+      return
+    }
+    transactions.push({
+      mdate: date_expr.mdate,
+      acc_from: account_expr.acc_from,
+      acc_to: account_expr.acc_to,
+      amount: amount_expr.amount,
+      currency: amount_expr.currency,
+    })
+  })
+  return transactions
 })
 
 export function useEditor() {

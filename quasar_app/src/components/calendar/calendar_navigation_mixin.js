@@ -50,10 +50,11 @@ export default {
       }
     },
     reset_zoom(){
-      this.tl.start_time = Date.now()
       this.tl.duration = 1000 * 3600 * 24 * 10 // one day in ms
 //      this.tl.duration = 1000 * 3600 * 24 * 30 * 3 // three months in ms
 //      this.tl.duration = 1000 * 3600 * 24 * 30 * 12 * 2  // 2 years in ms
+
+      this.tl.start_time = Date.now() - this.tl.duration * 0.0000001 // prevent flicker ("< now" -> "now")
     },
     _add_listener() {
       const el = document.getElementById(this.id)

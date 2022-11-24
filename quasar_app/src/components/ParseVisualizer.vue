@@ -34,7 +34,7 @@ export default defineComponent({
 
         let date = 'date?'
         if (date_expr) {
-          const mdate = moment(date_expr.date)
+          const mdate = date_expr.mdate
           const date_abs = mdate.format('ddd, YYYY MMM Do')
           let date_rel = mdate.calendar(null, {
               sameDay: '[Today]',

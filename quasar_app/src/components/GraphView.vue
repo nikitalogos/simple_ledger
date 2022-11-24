@@ -29,6 +29,7 @@ export default defineComponent({
   <div :id="id" class="gv-h-container" @pointerdown="start_drag($event)">
     <div class="gv-y"></div>
     <div class="gv-v-container">
+      <div class="label" style="width: fit-content" @click="reset_zoom()">Reset zoom</div>
       {{ tl?.start_mdate.format('YYYY-MM-DD HH:mm') }} - {{ tl?.end_mdate.format('YYYY-MM-DD HH:mm') }}
       <YearLine/>
       <MonthLine/>
