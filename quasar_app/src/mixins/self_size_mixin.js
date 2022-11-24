@@ -1,3 +1,7 @@
+
+// requires "id" property. Also root component in template should have id of id - :id="id"
+// interface: all variables under data()
+
 export default {
   props: {
     id: {
@@ -14,7 +18,7 @@ export default {
     }
   },
   methods: {
-    update_el_size() {
+    _update_el_size() {
       const rect = document.getElementById(this.id)?.getBoundingClientRect()
       this.el_width = rect?.width
       this.el_height = rect?.height
@@ -23,9 +27,9 @@ export default {
     },
   },
   created() {
-    setInterval(this.update_el_size, 100)
+    setInterval(this._update_el_size, 100)
   },
   mounted(){
-    this.update_el_size()
+    this._update_el_size()
   },
 }
