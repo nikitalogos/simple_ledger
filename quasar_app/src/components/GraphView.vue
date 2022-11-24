@@ -27,7 +27,25 @@ export default defineComponent({
   computed: {
     now_line_x() {
       return (this.tl.now_time - this.tl.start_time) / this.tl.duration * this.el_width
-    }
+    },
+    now_text_x() {
+      const text_width = 30
+      const text_width_long = 45
+      const margin = 5
+
+      if (this.now_line_x < 0) {
+        return margin
+      } else if (this.now_line_x < this.el_width / 2) {
+        return this.now_line_x + margin
+      } else if (this.now_line_x < this.el_width) {
+        return this.now_line_x - text_width - margin
+      } else {
+        return this.el_width - text_width_long - margin
+      }
+    },
+    now_text() {
+      return (this.now_line_x < 0 ? '< ' : '') + 'now' + (this.now_line_x < this.el_width ? '' : ' >')
+    },
   },
   methods: {
     start_drag(event) {
@@ -75,7 +93,10 @@ export default defineComponent({
     add_listener() {
       const el = document.getElementById(this.id)
       el.addEventListener('wheel', this.zoom_in_out)
-    }
+    },
+    fit_now() {
+      this.tl.start_time = this.tl.now_time - this.tl.duration / 2
+    },
   },
   created(){
     const { timeline } = useTimeline()
@@ -96,6 +117,7 @@ export default defineComponent({
     <DayLine/>
     <div class="gv-canvas">
       <div class="now-line" :style="{left: now_line_x + 'px'}"></div>
+      <div class="now-text" :style="{left: now_text_x + 'px'}" @dblclick="fit_now()">{{ now_text }}</div>
     </div>
   </div>
 </template>
@@ -123,6 +145,13 @@ export default defineComponent({
       width: 1px;
       top: 0;
       background-color: red;
+    }
+    .now-text {
+      position: absolute;
+      z-index: 100;
+      top: 0;
+      color: red;
+      user-select: none;
     }
   }
 }

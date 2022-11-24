@@ -35,7 +35,9 @@ export default defineComponent({
             mdate.set({year, month, day})
             const fraction = this.calc_fraction_ms('day', is_first, is_last, mdate)
 
-            days.push( {year, month, day, fraction} )
+            const is_weekend = this.is_weekend(mdate)
+
+            days.push( {year, month, day, fraction, is_weekend} )
           }
         }
       }
@@ -47,8 +49,8 @@ export default defineComponent({
       const m = moment()
       return m.year() === year && m.month() === month && m.date() === day
     },
-    is_weekend(year, month, day){
-      return false
+    is_weekend(mdate){
+      return mdate.day() > 4 // day of week in 5-sat or 6-sun
     },
     fit(year, month, day) {
       this.tl.start_time = moment([year, month, day]).valueOf()
@@ -69,7 +71,7 @@ export default defineComponent({
       <span
         :class="{
           this_day: is_this_day(day.year, day.month, day.day),
-          weekend: is_weekend(day.year, day.month, day.day)
+          weekend: day.is_weekend,
         }"
         @dblclick="fit(day.year, day.month, day.day)"
       >
