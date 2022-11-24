@@ -3,6 +3,7 @@ import { defineComponent } from 'vue';
 import moment from "moment"
 
 import self_size_mixin from 'src/mixins/self_size_mixin.js'
+import { useTimeline } from 'src/composables/timeline.ts'
 
 import YearLine from 'components/calendar/YearLine.vue'
 import MonthLine from 'components/calendar/MonthLine.vue'
@@ -19,22 +20,14 @@ export default defineComponent({
   },
   data (){
     return {
-      max_duration: 1000 * 3600 * 24 * 30 * 12 * 10,  // 10 years in ms
-      duration: 0,
-      start_time: 0,
+      tl: null,
       last_mouse_x: 0,
     }
   },
   computed: {
-    end_time(){
-      return this.start_time + this.duration
-    },
-    start_mdate(){
-      return moment(this.start_time)
-    },
-    end_mdate(){
-      return moment(this.end_time)
-    },
+    now_line_x() {
+      return (this.tl.now_time - this.tl.start_time) / this.tl.duration * this.el_width
+    }
   },
   methods: {
     start_drag(event) {
@@ -53,7 +46,7 @@ export default defineComponent({
       const offset = mouse_x - this.last_mouse_x
       this.last_mouse_x = mouse_x
 
-      this.start_time -= offset / this.el_width * this.duration
+      this.tl.start_time -= offset / this.el_width * this.tl.duration
     },
     stop_drag (){
       window.removeEventListener("pointermove", this.drag);
@@ -61,28 +54,32 @@ export default defineComponent({
     },
 
     zoom_in_out(event){
-      let pivot = ((event.clientX - this.el_left) / this.el_width) * this.duration
+      let pivot = ((event.clientX - this.el_left) / this.el_width) * this.tl.duration
 
       let is_scroll_down = event.deltaY > 0
       let zoom_speed = 1.01
       let zoom_value = is_scroll_down ? zoom_speed : 1/zoom_speed
-      const duration = this.duration * zoom_value
+      const duration = this.tl.duration * zoom_value
 
-      if (duration < this.max_duration) {
-        this.duration = duration
-        this.start_time += pivot * (1 - zoom_value)
+      if (this.tl.min_duration < duration && duration < this.tl.max_duration) {
+        this.tl.duration = duration
+        this.tl.start_time += pivot * (1 - zoom_value)
       }
     },
     reset_zoom(){
-      this.start_time = Date.now()
-      this.duration = 1000 * 3600 * 24 * 10 // one day in ms
-//      this.duration = 1000 * 3600 * 24 * 30 * 3 // three months in ms
-//      this.duration = 1000 * 3600 * 24 * 30 * 12 * 2  // 2 years in ms
+      this.tl.start_time = Date.now()
+      this.tl.duration = 1000 * 3600 * 24 * 10 // one day in ms
+//      this.tl.duration = 1000 * 3600 * 24 * 30 * 3 // three months in ms
+//      this.tl.duration = 1000 * 3600 * 24 * 30 * 12 * 2  // 2 years in ms
     },
     add_listener() {
       const el = document.getElementById(this.id)
       el.addEventListener('wheel', this.zoom_in_out)
     }
+  },
+  created(){
+    const { timeline } = useTimeline()
+    this.tl = timeline
   },
   mounted(){
     this.reset_zoom()
@@ -93,11 +90,13 @@ export default defineComponent({
 
 <template>
   <div :id="id" class="gv-container" @pointerdown="start_drag($event)">
-    {{ start_mdate.format('YYYY-MM-DD HH:mm') }} - {{ end_mdate.format('YYYY-MM-DD HH:mm') }}
-    <YearLine :start_mdate="start_mdate" :end_mdate="end_mdate"/>
-    <MonthLine :start_mdate="start_mdate" :end_mdate="end_mdate"/>
-    <DayLine :start_mdate="start_mdate" :end_mdate="end_mdate"/>
-    <div class="gv-canvas"></div>
+    {{ tl?.start_mdate.format('YYYY-MM-DD HH:mm') }} - {{ tl?.end_mdate.format('YYYY-MM-DD HH:mm') }}
+    <YearLine/>
+    <MonthLine/>
+    <DayLine/>
+    <div class="gv-canvas">
+      <div class="now-line" :style="{left: now_line_x + 'px'}"></div>
+    </div>
   </div>
 </template>
 
@@ -113,6 +112,18 @@ export default defineComponent({
 
     width: 100%;
     height: 100%;
+
+    position: relative;
+    overflow: hidden;
+
+    .now-line {
+      position: absolute;
+      z-index: 100;
+      height: 100%;
+      width: 1px;
+      top: 0;
+      background-color: red;
+    }
   }
 }
 </style>

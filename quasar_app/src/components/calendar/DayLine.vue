@@ -31,7 +31,7 @@ export default defineComponent({
             const is_first = (year === this.start_year && month === this.start_month && day === this.start_day)
             const is_last = (year === this.end_year && month === this.end_month && day === this.end_day)
 
-            const mdate = is_last? this.end_mdate.clone() : this.start_mdate.clone()
+            const mdate = is_last? this.tl.end_mdate.clone() : this.tl.start_mdate.clone()
             mdate.set({year, month, day})
             const fraction = this.calc_fraction_ms('day', is_first, is_last, mdate)
 
@@ -39,7 +39,6 @@ export default defineComponent({
           }
         }
       }
-      this.fix_fractions_if_2_items(days)
       return days
     },
   },
@@ -50,8 +49,12 @@ export default defineComponent({
     },
     is_weekend(year, month, day){
       return false
-    }
-  }
+    },
+    fit(year, month, day) {
+      this.tl.start_time = moment([year, month, day]).valueOf()
+      this.tl.duration = 1000 * 3600 * 24
+    },
+  },
 });
 </script>
 
@@ -68,6 +71,7 @@ export default defineComponent({
           this_day: is_this_day(day.year, day.month, day.day),
           weekend: is_weekend(day.year, day.month, day.day)
         }"
+        @dblclick="fit(day.year, day.month, day.day)"
       >
         {{ day.day }}
       </span>
@@ -85,8 +89,11 @@ export default defineComponent({
 
   .cal-day {
     box-sizing: border-box;
-    border-right: 1px solid;
     overflow: hidden;
+
+    &:not(:last-child) {
+      border-right: 1px solid;
+    }
 
     user-select: none;
 

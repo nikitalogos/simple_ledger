@@ -16,20 +16,23 @@ export default defineComponent({
         const is_first = (year === this.start_year)
         const is_last = (year === this.end_year)
 
-        const mdate = is_last? this.end_mdate.clone() : this.start_mdate.clone()
+        const mdate = is_last? this.tl.end_mdate.clone() : this.tl.start_mdate.clone()
         mdate.set({year})
         const fraction = this.calc_fraction_ms('year', is_first, is_last, mdate)
 
         years.push( {year, fraction} )
       }
-      this.fix_fractions_if_2_items(years)
       return years
     },
   },
   methods: {
     is_this_year(year){
       return moment().year() === year
-    }
+    },
+    fit(year) {
+      this.tl.start_time = moment([year]).valueOf()
+      this.tl.duration = 1000 * 3600 * 24 * this.days_in_year(year)
+    },
   }
 });
 </script>
@@ -47,6 +50,7 @@ export default defineComponent({
           this_year: is_this_year(year.year),
           leap_year: is_leap_year(year.year),
         }"
+        @dblclick="fit(year.year)"
       >
         {{ year.year }}
       </div>
@@ -64,8 +68,11 @@ export default defineComponent({
 
   .cal-year {
     box-sizing: border-box;
-    border-right: 1px solid;
     overflow: hidden;
+
+    &:not(:last-child) {
+      border-right: 1px solid;
+    }
 
     user-select: none;
 

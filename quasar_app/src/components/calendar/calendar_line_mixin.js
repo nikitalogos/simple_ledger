@@ -1,32 +1,29 @@
+import { useTimeline } from 'src/composables/timeline.ts'
+
 export default {
-  props: {
-    start_mdate: {
-      type: Object,
-      required: true,
-    },
-    end_mdate: {
-      type: Object,
-      required: true,
-    },
+  data (){
+    return {
+      tl: null,
+    }
   },
   computed: {
     start_year(){
-      return this.start_mdate.year()
+      return this.tl.start_mdate.year()
     },
     end_year(){
-      return this.end_mdate.year()
+      return this.tl.end_mdate.year()
     },
     start_month(){
-      return this.start_mdate.month()
+      return this.tl.start_mdate.month()
     },
     end_month(){
-      return this.end_mdate.month()
+      return this.tl.end_mdate.month()
     },
     start_day(){
-      return this.start_mdate.date()
+      return this.tl.start_mdate.date()
     },
     end_day(){
-      return this.end_mdate.date()
+      return this.tl.end_mdate.date()
     },
   },
   methods: {
@@ -95,15 +92,9 @@ export default {
         return total_ms
       }
     },
-    fix_fractions_if_2_items(items) {
-      // flex-grow fix that if fractions sum < 1 two elements don't take up the full space
-      if (items.length === 2){
-        const fractions = [items[0].fraction, items[1].fraction]
-        const divider =  Math.min(...fractions)
-        items[0].fraction = fractions[0] / divider
-        items[1].fraction = fractions[1] / divider
-      }
-    },
-
-  }
+  },
+  created(){
+    const { timeline } = useTimeline()
+    this.tl = timeline
+  },
 }

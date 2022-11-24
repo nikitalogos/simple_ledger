@@ -15,7 +15,14 @@
 
           </SplitScreen>
         </template>
-        <template v-slot:part2> <GraphView id="graph_view"/> </template>
+        <template v-slot:part2>
+          <SplitScreen :is_vertical="false" id="split_screen_h2_v2_h">
+
+            <template v-slot:part1> <GraphView id="graph_view"/>  </template>
+            <template v-slot:part2>  </template>
+
+          </SplitScreen>
+        </template>
 
       </SplitScreen>
     </template>

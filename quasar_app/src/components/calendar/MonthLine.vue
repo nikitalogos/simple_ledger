@@ -24,7 +24,7 @@ export default defineComponent({
           const is_first = (year === this.start_year && month === this.start_month)
           const is_last = (year === this.end_year && month === this.end_month)
 
-          const mdate = is_last? this.end_mdate.clone() : this.start_mdate.clone()
+          const mdate = is_last? this.tl.end_mdate.clone() : this.tl.start_mdate.clone()
           mdate.set({year, month})
           const fraction = this.calc_fraction_ms('month', is_first, is_last, mdate)
 
@@ -33,7 +33,6 @@ export default defineComponent({
           months.push( {year, month, fraction, month_str} )
         }
       }
-      this.fix_fractions_if_2_items(months)
       return months
     },
   },
@@ -44,7 +43,11 @@ export default defineComponent({
     },
     is_long_month(year, month){
       return this.days_in_month(year, month) === 31
-    }
+    },
+    fit(year, month) {
+      this.tl.start_time = moment([year, month]).valueOf()
+      this.tl.duration = 1000 * 3600 * 24 * this.days_in_month(year, month)
+    },
   }
 });
 </script>
@@ -62,6 +65,7 @@ export default defineComponent({
           this_month: is_this_month(month.year, month.month),
           long_month: is_long_month(month.year, month.month)
         }"
+        @dblclick="fit(month.year, month.month)"
       >
         {{ month.month_str }}
       </span>
@@ -79,8 +83,11 @@ export default defineComponent({
 
   .cal-month {
     box-sizing: border-box;
-    border-right: 1px solid;
     overflow: hidden;
+
+    &:not(:last-child) {
+      border-right: 1px solid;
+    }
 
     user-select: none;
 
