@@ -1,17 +1,17 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import { useSettings } from 'src/composables/settings.ts'
+import { useEditor } from 'src/composables/editor.ts'
 
 export default defineComponent({
   data() {
     return {
-      settings: null,
+      editor: null,
     }
   },
   created() {
-    const { settings } = useSettings()
-    this.settings = settings
+    const { editor } = useEditor()
+    this.editor = editor
   },
 });
 </script>
@@ -19,7 +19,7 @@ export default defineComponent({
 <template>
   <json-viewer
       class=".json-viewer-custom-theme"
-      :value="settings.parse_tree"
+      :value="editor.parse_tree"
       :expand-depth=1000
       expanded
       sort></json-viewer>

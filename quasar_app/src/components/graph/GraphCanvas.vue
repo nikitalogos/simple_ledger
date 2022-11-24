@@ -3,6 +3,7 @@ import { defineComponent } from 'vue';
 import moment from "moment"
 
 import self_size_mixin from 'src/mixins/self_size_mixin.js'
+import { useEditor } from 'src/composables/editor.ts'
 import { useTimeline } from 'src/composables/timeline.ts'
 
 export default defineComponent({
@@ -11,6 +12,7 @@ export default defineComponent({
   ],
   data (){
     return {
+      editor: null,
       tl: null,
     }
   },
@@ -43,6 +45,9 @@ export default defineComponent({
     },
   },
   created(){
+    const { editor } = useEditor()
+    this.editor = editor
+
     const { timeline } = useTimeline()
     this.tl = timeline
   },

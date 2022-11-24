@@ -1,23 +1,23 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import { useSettings } from 'src/composables/settings.ts'
+import { useEditor } from 'src/composables/editor.ts'
 
 export default defineComponent({
   data() {
     return {
-      settings: null,
+      editor: null,
     }
   },
   created() {
-    const { settings } = useSettings()
-    this.settings = settings
+    const { editor } = useEditor()
+    this.editor = editor
   },
 });
 </script>
 
 <template>
-  <textarea v-model="settings.text"></textarea>
+  <textarea v-model="editor.text"></textarea>
 </template>
 
 <style scoped lang="scss">

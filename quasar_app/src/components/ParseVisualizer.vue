@@ -1,13 +1,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import { useSettings } from 'src/composables/settings.ts'
+import { useEditor } from 'src/composables/editor.ts'
 import moment from "moment"
 
 export default defineComponent({
   data() {
     return {
-      settings: null,
+      editor: null,
     }
   },
   methods: {
@@ -27,7 +27,7 @@ export default defineComponent({
   },
   computed: {
     transactions_formatted() {
-      return this.settings.parse_tree.map((transaction) => {
+      return this.editor.parse_tree.map((transaction) => {
         const date_expr = transaction.date_expr
         const account_expr = transaction.account_expr
         const amount_expr = transaction.amount_expr
@@ -73,8 +73,8 @@ export default defineComponent({
     }
   },
   created() {
-    const { settings } = useSettings()
-    this.settings = settings
+    const { editor } = useEditor()
+    this.editor = editor
   },
 });
 </script>

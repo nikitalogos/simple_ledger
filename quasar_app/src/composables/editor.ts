@@ -5,8 +5,7 @@ import { actions, types } from 'src/text_parser/functions.js'
 const parse = (string) => text_parser.parse(string, { actions, types })
 //import parse from 'src/text_parser/parser.js'
 
-const settings = reactive({
-//  text: "- 2022.11.10 > 100k rub ",
+const editor = reactive({
   text: `
 # Planning
 
@@ -31,12 +30,15 @@ const settings = reactive({
 
 `
 })
-settings.parse_tree = computed(() => {
-  const p = parse(settings.text)
+editor.parse_tree = computed(() => {
+  const p = parse(editor.text)
   console.log('p', p)
   return p
 })
+editor.transactions = computed(() => {
+  return editor.parse_tree
+})
 
-export function useSettings() {
-  return {settings}
+export function useEditor() {
+  return {editor}
 }
