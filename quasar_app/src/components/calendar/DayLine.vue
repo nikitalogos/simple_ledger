@@ -69,6 +69,7 @@ export default defineComponent({
       :style="{flex: day.fraction}"
     >
       <span
+        class="text"
         :class="{
           this_day: is_this_day(day.year, day.month, day.day),
           weekend: day.is_weekend,
@@ -87,7 +88,7 @@ export default defineComponent({
   flex-direction: row;
   align-items: center;
 
-  line-height: 1.1rem;
+  line-height: var(--calendar-line-height);
 
   .cal-day {
     box-sizing: border-box;
@@ -101,6 +102,9 @@ export default defineComponent({
 
     text-align: center;
 
+    .text {
+      cursor: pointer;
+    }
     .this_day {
       color: var(--highlight-color);
       font-weight: bold;

@@ -45,7 +45,8 @@ export default defineComponent({
       :key="idx"
       :style="{flex: year.fraction}"
     >
-      <div
+      <span
+        class="text"
         :class="{
           this_year: is_this_year(year.year),
           leap_year: is_leap_year(year.year),
@@ -53,7 +54,7 @@ export default defineComponent({
         @dblclick="fit(year.year)"
       >
         {{ year.year }}
-      </div>
+      </span>
     </div>
   </div>
 </template>
@@ -64,7 +65,7 @@ export default defineComponent({
   flex-direction: row;
   align-items: center;
 
-  line-height: 1.1rem;
+  line-height: var(--calendar-line-height);
 
   .cal-year {
     box-sizing: border-box;
@@ -78,6 +79,9 @@ export default defineComponent({
 
     text-align: center;
 
+    .text {
+      cursor: pointer;
+    }
     .this_year {
       color: var(--highlight-color);
       font-weight: bold;

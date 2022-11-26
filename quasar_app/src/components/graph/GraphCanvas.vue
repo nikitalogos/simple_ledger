@@ -5,6 +5,7 @@ import moment from "moment"
 import self_size_mixin from 'src/mixins/self_size_mixin.js'
 import { useEditor } from 'src/composables/editor.ts'
 import { useTimeline } from 'src/composables/timeline.ts'
+import { useGraph } from 'src/composables/graph.ts'
 
 export default defineComponent({
   mixins: [
@@ -14,6 +15,7 @@ export default defineComponent({
     return {
       editor: null,
       tl: null,
+      graph: null,
 
       selected_account: 'card_rub'
     }
@@ -85,14 +87,13 @@ export default defineComponent({
       const amount_min = Math.min(...amounts)
       const amount_max = Math.max(...amounts)
       const amount_spread = (amount_max - amount_min) + 1e-30 // prevent zero division
-      const padding_px = 10
 
       let x_last = 1e30 // set infinite time to make dx,dy positive for the first point
       let y_last = 1e30
 
       points.forEach((point) => {
         const amount_normed = (point.sum - amount_min) / amount_spread
-        const y = (1 - amount_normed) * (this.el_height - padding_px * 2) + padding_px
+        const y = (1 - amount_normed) * (this.el_height - this.graph.padding_v_px) + this.graph.padding_v_px
         Object.assign(point, {
           y: y,
           dx: point.x - x_last,
@@ -110,18 +111,27 @@ export default defineComponent({
       this.tl.start_time = this.tl.now_time - this.tl.duration / 2
     },
   },
+  watch: {
+    points(points) {
+      const amounts = points.map((point) => point.sum)
+      this.graph.min_value = Math.min(...amounts)
+      this.graph.max_value = Math.max(...amounts)
+    }
+  },
   created(){
     const { editor } = useEditor()
     this.editor = editor
 
     const { timeline } = useTimeline()
     this.tl = timeline
+
+    const { graph } = useGraph()
+    this.graph = graph
   },
 });
 </script>
 
 <template>
-  {{points}}
   <div :id="id" class="graph-canvas">
     <div class="now-line" :style="{left: now_line_x + 'px'}"></div>
     <div class="now-text" :style="{left: now_text_x + 'px'}" @dblclick="fit_now()">{{ now_text }}</div>
@@ -181,6 +191,7 @@ export default defineComponent({
     z-index: 100;
     color: var(--highlight-color);
     user-select: none;
+    cursor: pointer;
   }
 
   .point {

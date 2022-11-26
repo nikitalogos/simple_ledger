@@ -18,6 +18,11 @@ timeline.end_mdate = computed(() => {
   return moment(timeline.end_time)
 })
 
+timeline.reset_zoom = () => {
+  timeline.duration = 1000 * 3600 * 24 * 10 // one day in ms
+  timeline.start_time = Date.now() - timeline.duration * 0.0000001 // prevent flicker ("< now" -> "now")
+}
+
 setInterval(() => timeline.now_time = Date.now(), 100)
 
 export function useTimeline() {

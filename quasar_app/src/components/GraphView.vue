@@ -9,6 +9,8 @@ import calendar_navigation_mixin from 'components/calendar/calendar_navigation_m
 import YearLine from 'components/calendar/YearLine.vue'
 import MonthLine from 'components/calendar/MonthLine.vue'
 import DayLine from 'components/calendar/DayLine.vue'
+
+import GraphYScale from 'components/graph/GraphYScale.vue'
 import GraphCanvas from 'components/graph/GraphCanvas.vue'
 
 export default defineComponent({
@@ -20,6 +22,8 @@ export default defineComponent({
     YearLine,
     MonthLine,
     DayLine,
+
+    GraphYScale,
     GraphCanvas,
   },
 });
@@ -27,10 +31,10 @@ export default defineComponent({
 
 <template>
   <div :id="id" class="gv-h-container" @pointerdown="start_drag($event)">
-    <div class="gv-y"></div>
+    <div class="gv-y">
+      <GraphYScale :id="`${id}_graph_y_scale`"/>
+    </div>
     <div class="gv-v-container">
-      <div class="label" style="width: fit-content" @click="reset_zoom()">Reset zoom</div>
-      {{ tl?.start_mdate.format('YYYY-MM-DD HH:mm') }} - {{ tl?.end_mdate.format('YYYY-MM-DD HH:mm') }}
       <YearLine/>
       <MonthLine/>
       <DayLine/>
@@ -46,7 +50,8 @@ export default defineComponent({
   height: 100%;
 
   .gv-y {
-    width: 30px;
+    width: var(--graph-y-scale-width);
+//    padding-top: calc(var(--calendar-line-height) * 3);
   }
 
   .gv-v-container {
@@ -54,7 +59,7 @@ export default defineComponent({
     flex-direction: column;
     height: 100%;
     width: 100%;
-    max-width: calc(100% - 30px);
+    max-width: calc(100% - var(--graph-y-scale-width));
   }
 }
 </style>

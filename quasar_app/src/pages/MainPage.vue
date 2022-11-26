@@ -19,7 +19,9 @@
           <SplitScreen :is_vertical="false" id="split_screen_h2_v2_h">
 
             <template v-slot:part1> <GraphView id="graph_view"/>  </template>
-            <template v-slot:part2>  </template>
+            <template v-slot:part2>
+              <div class="label" style="width: fit-content" @click="tl.reset_zoom()">Reset zoom</div>
+            </template>
 
           </SplitScreen>
         </template>
@@ -41,6 +43,8 @@ import GraphView from 'components/GraphView.vue'
 
 import ParseTree from 'components/ParseTree.vue'
 
+import { useTimeline } from 'src/composables/timeline.ts'
+
 export default defineComponent({
   components: {
     SplitScreen,
@@ -51,7 +55,16 @@ export default defineComponent({
     GraphView,
 
 //    ParseTree,
-  }
+  },
+  data (){
+    return {
+      tl: null,
+    }
+  },
+  created(){
+    const { timeline } = useTimeline()
+    this.tl = timeline
+  },
 });
 </script>
 

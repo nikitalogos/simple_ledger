@@ -61,6 +61,7 @@ export default defineComponent({
       :style="{flex: month.fraction}"
     >
       <span
+        class="text"
         :class="{
           this_month: is_this_month(month.year, month.month),
           long_month: is_long_month(month.year, month.month)
@@ -79,7 +80,7 @@ export default defineComponent({
   flex-direction: row;
   align-items: center;
 
-  line-height: 1.1rem;
+  line-height: var(--calendar-line-height);
 
   .cal-month {
     box-sizing: border-box;
@@ -93,6 +94,9 @@ export default defineComponent({
 
     text-align: center;
 
+    .text {
+      cursor: pointer;
+    }
     .this_month {
       color: var(--highlight-color);
       font-weight: bold;
