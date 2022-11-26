@@ -14,39 +14,6 @@ export default defineComponent({
       graph: null,
     }
   },
-  computed: {
-    ticks() {
-      if (!this.el_height){
-        return []
-      }
-      const max_ticks_num = Math.floor(this.el_height / this.graph.tick_height_px)
-      if (max_ticks_num === 0){
-        return []
-      }
-      const spread = this.graph.max_value - this.graph.min_value
-      if (spread === 0){
-        return []
-      }
-      const min_step = spread / max_ticks_num
-
-      const log10_int = Math.floor(Math.log10(min_step))
-      const first_digit = Math.floor(min_step / 10 ** log10_int)
-      const tick_step = [1, 2, 5, 5, 5, 10, 10, 10, 10, 10][first_digit] * 10 ** log10_int
-
-      const first_tick = Math.ceil(this.graph.min_value / tick_step) * tick_step
-
-      const ticks = []
-      for (let value = first_tick; value < this.graph.max_value; value += tick_step) {
-        const value_normed = (value - this.graph.min_value) / spread
-        const y = (1 - value_normed) * (this.el_height - this.graph.padding_v_px) + this.graph.padding_v_px
-        ticks.push({
-          value,
-          y,
-        })
-      }
-      return ticks
-    },
-  },
   created(){
     const { graph } = useGraph()
     this.graph = graph
@@ -58,15 +25,15 @@ export default defineComponent({
   <div :id="id" class="graph-y-scale">
     <div
       class="tick"
-      v-for="(tick, idx) in ticks"
+      v-for="(tick, idx) in graph.ticks"
       :key="'tick' + idx"
-      :style="{top: tick.y + 'px'}"
+      :style="{bottom: (el_height - tick.y) + 'px'}"
     >
-      {{tick.value}}
+      {{tick.text}}
     </div>
     <div
       class="line"
-      v-for="(tick, idx) in ticks"
+      v-for="(tick, idx) in graph.ticks"
       :key="'line' + idx"
       :style="{top: tick.y + 'px'}"
     >
@@ -76,19 +43,20 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .graph-y-scale {
-  width: 100%;
+  width: var(--graph-y-scale-width);
   height: 100%;
 
   position: relative;
 
   .tick {
     position: absolute;
+    left: 8px;
   }
   .line {
     position: absolute;
     height: 1px;
-    width: 100px;
-    background-color: red;
+    width: 100%;
+    background-color: white;
   }
 }
 </style>

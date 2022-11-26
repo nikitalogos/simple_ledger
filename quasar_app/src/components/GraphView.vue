@@ -50,8 +50,7 @@ export default defineComponent({
   height: 100%;
 
   .gv-y {
-    width: var(--graph-y-scale-width);
-//    padding-top: calc(var(--calendar-line-height) * 3);
+    padding-top: calc(var(--calendar-line-height) * 3);
   }
 
   .gv-v-container {

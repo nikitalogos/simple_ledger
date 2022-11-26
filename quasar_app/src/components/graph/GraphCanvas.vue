@@ -42,6 +42,9 @@ export default defineComponent({
     now_text() {
       return (this.now_line_x < 0 ? '< ' : '') + 'now' + (this.now_line_x < this.el_width ? '' : ' >')
     },
+    zero_line_y() {
+      return this.graph.value_to_y(0, this.el_height)
+    },
 
     points() {
       if (!this.editor?.transactions){
@@ -53,7 +56,7 @@ export default defineComponent({
       // leave transactions from start to the first that is bigger than the graph scale
       const last_transaction_idx = transactions.findIndex((tr) => tr.time > this.tl.end_time)
       if (last_transaction_idx !== -1){
-        transactions = transactions.slice(0, last_transaction_idx + 1)
+        transactions = transactions.slice(0, last_transaction_idx)
       }
 
       const points = []
@@ -83,17 +86,14 @@ export default defineComponent({
         }
       })
 
-      const amounts = points.map((point) => point.sum)
-      const amount_min = Math.min(...amounts)
-      const amount_max = Math.max(...amounts)
-      const amount_spread = (amount_max - amount_min) + 1e-30 // prevent zero division
+      // should go before calling this.graph.value_to_y()
+      this.graph.update_on_points_change(points)
 
       let x_last = 1e30 // set infinite time to make dx,dy positive for the first point
       let y_last = 1e30
 
       points.forEach((point) => {
-        const amount_normed = (point.sum - amount_min) / amount_spread
-        const y = (1 - amount_normed) * (this.el_height - this.graph.padding_v_px) + this.graph.padding_v_px
+        const y = this.graph.value_to_y(point.sum, this.el_height)
         Object.assign(point, {
           y: y,
           dx: point.x - x_last,
@@ -112,10 +112,8 @@ export default defineComponent({
     },
   },
   watch: {
-    points(points) {
-      const amounts = points.map((point) => point.sum)
-      this.graph.min_value = Math.min(...amounts)
-      this.graph.max_value = Math.max(...amounts)
+    el_height(height) {
+      this.graph.canvas_el_height = height
     }
   },
   created(){
@@ -135,6 +133,7 @@ export default defineComponent({
   <div :id="id" class="graph-canvas">
     <div class="now-line" :style="{left: now_line_x + 'px'}"></div>
     <div class="now-text" :style="{left: now_text_x + 'px'}" @dblclick="fit_now()">{{ now_text }}</div>
+    <div class="zero-line" :style="{top: zero_line_y + 'px'}"></div>
     <div
       v-for="(point, idx) in points"
       :key="'point' + idx"
@@ -145,7 +144,7 @@ export default defineComponent({
     </div>
     <div
       v-for="(point, idx) in points.slice(1)"
-      :key="'hline' + idx"
+      :key="'data_hline' + idx"
       class="line"
       :class="{income: point.dy <= 0, expense: point.dy > 0}"
       :style="{
@@ -157,7 +156,7 @@ export default defineComponent({
     ></div>
     <div
       v-for="(point, idx) in points.slice(1)"
-      :key="'vline' + idx"
+      :key="'data_vline' + idx"
       class="line"
       :class="{income: point.dy <= 0, expense: point.dy > 0}"
       :style="{
@@ -167,6 +166,17 @@ export default defineComponent({
         width: '1px',
       }"
     ></div>
+    <div
+      class="grid-line"
+      v-for="(tick, idx) in graph.ticks"
+      :key="'grid_hline' + idx"
+      :style="{
+        top: tick.y + 'px',
+        height: '1px',
+        width: '100%',
+      }"
+    >
+    </div>
 
   </div>
 </template>
@@ -181,39 +191,51 @@ export default defineComponent({
 
   .now-line {
     position: absolute;
-    z-index: 100;
+    z-index: 10;
     height: 100%;
     width: 1px;
     background-color: var(--highlight-color);
   }
   .now-text {
     position: absolute;
-    z-index: 100;
+    z-index: 1000;
     color: var(--highlight-color);
     user-select: none;
     cursor: pointer;
   }
+  .zero-line {
+    position: absolute;
+    z-index: 10;
+    height: 1px;
+    width: 100%;
+    background-color: var(--highlight-color);
+  }
 
   .point {
     position: absolute;
-    z-index: 2;
+    z-index: 101;
     color: black;
 
-    width: 10px;
-    height: 10px;
-    border-radius: 5px;
-    margin: -5px;
+    width: var(--point-diameter);
+    height: var(--point-diameter);
+    border-radius: calc(var(--point-diameter) / 2);
+    margin: calc(var(--point-diameter) * -1 / 2);
     background-color: red;
   }
   .line {
     position: absolute;
-    z-index: 1;
+    z-index: 100;
   }
   .income {
     background-color: var(--income-color);
   }
   .expense {
     background-color: var(--expense-color);
+  }
+  .grid-line {
+    position: absolute;
+    z-index: 1;
+    background-color: var(--grid-color);
   }
 }
 </style>

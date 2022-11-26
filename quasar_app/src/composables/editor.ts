@@ -7,10 +7,19 @@ const parse = (string) => text_parser.parse(string, { actions, types })
 
 const editor = reactive({
   text: `
-11.25 salary> 100k
-11.26 salary> 10k
-11.27 >food 30k
-11.28 >beauty 50k
+# 11.27 >null 1k
+11.24 salary> 6.5
+11.25 salary> 33
+11.26 salary> 13
+11.27 salary> 100
+11.28 salary> 200
+11.29 salary> 500
+11.30 salary> 1k
+12.01 salary> 3.5k
+12.02 salary> 8k
+12.03 salary> 20k
+12.04 salary> 100k
+12.05 >beauty 1m
 `
 })
 editor.parse_tree = computed(() => {
