@@ -46,9 +46,18 @@ export default defineComponent({
         return null
       }
 
+      let transactions = [...this.editor.transactions]
+      transactions.sort((a,b) => a.time - b.time)
+      // leave transactions from start to the first that is bigger than the graph scale
+      const last_transaction_idx = transactions.findIndex((tr) => tr.time > this.tl.end_time)
+      if (last_transaction_idx !== -1){
+        transactions = transactions.slice(0, last_transaction_idx + 1)
+      }
+
       const points = []
       let sum = 0
-      this.editor.transactions.forEach((transaction) => {
+      transactions.forEach((transaction) => {
+        // all transactions since start add up to sum
         let amount
         if (transaction.acc_to === this.selected_account) {
           amount = transaction.amount
@@ -58,35 +67,38 @@ export default defineComponent({
           return
         }
         sum += amount
-        const time = transaction.mdate.valueOf()
-        points.push({
-          amount,
-          time,
-          sum,
-        })
+
+        // only visible transactions become points
+        const time = transaction.time
+        if (time > this.tl.start_time) {
+          const x = (time - this.tl.start_time) / this.tl.duration * this.el_width
+          points.push({
+            amount,
+            sum,
+            time,
+            x,
+          })
+        }
       })
-      points.sort((a, b) => a.time - b.time)
 
       const amounts = points.map((point) => point.sum)
       const amount_min = Math.min(...amounts)
       const amount_max = Math.max(...amounts)
-      const amount_spread = amount_max - amount_min
+      const amount_spread = (amount_max - amount_min) + 1e-30 // prevent zero division
       const padding_px = 10
 
-      let x_last = 0
-      let y_last = 0
+      let x_last = 1e30 // set infinite time to make dx,dy positive for the first point
+      let y_last = 1e30
 
       points.forEach((point) => {
         const amount_normed = (point.sum - amount_min) / amount_spread
-        const x = (point.time - this.tl.start_time) / this.tl.duration * this.el_width
         const y = (1 - amount_normed) * (this.el_height - padding_px * 2) + padding_px
         Object.assign(point, {
-          x: x,
           y: y,
-          dx: x - x_last,
+          dx: point.x - x_last,
           dy: y - y_last,
         })
-        x_last = x
+        x_last = point.x
         y_last = y
       })
 
@@ -109,6 +121,7 @@ export default defineComponent({
 </script>
 
 <template>
+  {{points}}
   <div :id="id" class="graph-canvas">
     <div class="now-line" :style="{left: now_line_x + 'px'}"></div>
     <div class="now-text" :style="{left: now_text_x + 'px'}" @dblclick="fit_now()">{{ now_text }}</div>
@@ -116,6 +129,7 @@ export default defineComponent({
       v-for="(point, idx) in points"
       :key="'point' + idx"
       class="point"
+      :class="{income: point.dy <= 0, expense: point.dy > 0}"
       :style="{left: point.x + 'px', top: point.y + 'px'}"
     >
     </div>
@@ -123,6 +137,7 @@ export default defineComponent({
       v-for="(point, idx) in points.slice(1)"
       :key="'hline' + idx"
       class="line"
+      :class="{income: point.dy <= 0, expense: point.dy > 0}"
       :style="{
         left: (point.x - point.dx) + 'px',
         top: (point.y - point.dy) + 'px',
@@ -134,6 +149,7 @@ export default defineComponent({
       v-for="(point, idx) in points.slice(1)"
       :key="'vline' + idx"
       class="line"
+      :class="{income: point.dy <= 0, expense: point.dy > 0}"
       :style="{
         left: point.x + 'px',
         top: (point.dy > 0 ? (point.y - point.dy) : point.y) + 'px',
@@ -147,8 +163,6 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .graph-canvas {
-  background-color: white;
-
   width: 100%;
   height: 100%;
 
@@ -160,18 +174,18 @@ export default defineComponent({
     z-index: 100;
     height: 100%;
     width: 1px;
-    background-color: red;
+    background-color: var(--highlight-color);
   }
   .now-text {
     position: absolute;
     z-index: 100;
-    color: red;
+    color: var(--highlight-color);
     user-select: none;
   }
 
   .point {
     position: absolute;
-    z-index: 100;
+    z-index: 2;
     color: black;
 
     width: 10px;
@@ -182,8 +196,13 @@ export default defineComponent({
   }
   .line {
     position: absolute;
-    z-index: 100;
-    background-color: red;
+    z-index: 1;
+  }
+  .income {
+    background-color: var(--income-color);
+  }
+  .expense {
+    background-color: var(--expense-color);
   }
 }
 </style>

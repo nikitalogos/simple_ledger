@@ -31,8 +31,13 @@ editor.transactions = computed(() => {
     if (account_expr.acc_from === account_expr.acc_to) {
       return
     }
+    if (amount_expr.amount === 0) {
+      return
+    }
     transactions.push({
       mdate: date_expr.mdate,
+      time: date_expr.mdate.valueOf(),
+
       acc_from: account_expr.acc_from,
       acc_to: account_expr.acc_to,
       amount: amount_expr.amount,
