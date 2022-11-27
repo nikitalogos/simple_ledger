@@ -64,9 +64,9 @@ export default defineComponent({
       transactions.forEach((transaction) => {
         // all transactions since start add up to sum
         let amount
-        if (transaction.acc_to === this.selected_account) {
+        if (transaction.acc_to === this.graph.account) {
           amount = transaction.amount
-        } else if (transaction.acc_from === this.selected_account) {
+        } else if (transaction.acc_from === this.graph.account) {
           amount = -transaction.amount
         } else {
           return

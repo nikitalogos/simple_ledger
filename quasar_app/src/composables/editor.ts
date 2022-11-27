@@ -55,6 +55,12 @@ editor.transactions = computed(() => {
   })
   return transactions
 })
+editor.accounts = computed(() => {
+  const accounts_from = editor.transactions.map((tr) => tr.acc_from)
+  const accounts_to = editor.transactions.map((tr) => tr.acc_to)
+  const accounts = accounts_from.concat(accounts_to)
+  return [...new Set(accounts)]
+})
 
 export function useEditor() {
   return {editor}

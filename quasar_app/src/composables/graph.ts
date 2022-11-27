@@ -4,6 +4,8 @@ const graph = reactive({
   padding_v_px: 10,
   tick_height_px: 50,
 
+  account: 'card_rub',
+
   canvas_el_height: 0,
   points_num: 0,
   min_value: 0,

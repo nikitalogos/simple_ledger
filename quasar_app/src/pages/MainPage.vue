@@ -19,9 +19,7 @@
           <SplitScreen :is_vertical="false" id="split_screen_h2_v2_h">
 
             <template v-slot:part1> <GraphView id="graph_view"/>  </template>
-            <template v-slot:part2>
-              <div class="label" style="width: fit-content" @click="tl.reset_zoom()">Reset zoom</div>
-            </template>
+            <template v-slot:part2> <GraphSettings/> </template>
 
           </SplitScreen>
         </template>
@@ -40,10 +38,9 @@ import AccountsPartition from 'components/AccountsPartition.vue'
 import TextEditor from 'components/TextEditor.vue'
 import ParseVisualizer from 'components/ParseVisualizer.vue'
 import GraphView from 'components/GraphView.vue'
+import GraphSettings from 'components/GraphSettings.vue'
 
 import ParseTree from 'components/ParseTree.vue'
-
-import { useTimeline } from 'src/composables/timeline.ts'
 
 export default defineComponent({
   components: {
@@ -53,17 +50,9 @@ export default defineComponent({
     TextEditor,
     ParseVisualizer,
     GraphView,
+    GraphSettings,
 
 //    ParseTree,
-  },
-  data (){
-    return {
-      tl: null,
-    }
-  },
-  created(){
-    const { timeline } = useTimeline()
-    this.tl = timeline
   },
 });
 </script>
